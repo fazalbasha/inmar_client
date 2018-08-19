@@ -7,6 +7,11 @@ import Contacts from './components/contacts/Contacts'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import DrawerLayout from 'vue-drawer-layout'
+import '@/styles/index.scss' // global css
+
+Vue.use(DrawerLayout)
+
 Vue.use(ElementUI, {
   size: 'medium' // set element-ui default size
 })
