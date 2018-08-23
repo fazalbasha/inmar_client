@@ -31,7 +31,8 @@
     <el-input v-model="form.fax" placeholder="...."></el-input>
   </el-form-item>
   <el-form-item>
-    <el-button type="primary" @click="handleCreate" :loading="loading">Create</el-button>
+    <el-button type="primary" @click="handleUpdate" :loading="loading" v-if="ContactData.id">update</el-button>
+    <el-button type="primary" @click="handleCreate" :loading="loading" v-else>Create</el-button>
     <el-button @click="toggleDrawer">Cancel</el-button>
   </el-form-item>
 </el-form>
@@ -40,49 +41,78 @@
 
 <script>
 import { HTTP } from '@/request'
-  export default {
-    name: 'ContactForm',
-    components: {
-    },
-    data() {
-      return {
-        form: {
-          name: '',
-          user_type: '',
-          email: '',
-          title: '',
-          phone: '',
-          ext: '',
-          fax: ''
-        },
-        types: [],
-        value: '',
-        loading: false
-      }
-    },
-    created() {
-      var user_types = ["Executive", "Inmar AR", "Daily", "Other"]
-      var self = this
-      user_types.forEach(function(element) {
-        self.types.push({value: element, label: element})
-      })
-      console.log(this.types);
-    },
-    methods: {
-      handleCreate: function() {
-        this.loading = true
-        var params = { contact: this.$data.form }
-        HTTP.post('/contacts', params )
-        .then(response => {
-          console.log(response)
-          this.$emit('showIndex')
-        })
-      },
-      toggleDrawer: function() {
-        this.$emit('toggleDrawer')
+
+export default {
+  name: 'ContactForm',
+  components: {
+  },
+  props: ["ContactData"],
+  watch: {
+    ContactData(newvalue, oldvalue) {
+      if (this.ContactData.id !== undefined) {
+        this.form = this.ContactData
+      }else{
+        this.form = {}
       }
     }
+  },
+  data() {
+    return {
+      form: {
+        name: '',
+        user_type: '',
+        email: '',
+        title: '',
+        phone: '',
+        ext: '',
+        fax: ''
+      },
+      types: [],
+      value: '',
+      loading: false
+    }
+  },
+  created() {
+    var user_types = ["Executive", "Inmar AR", "Daily", "Other"]
+    var self = this
+    user_types.forEach(function(element) {
+      self.types.push({value: element, label: element})
+    })
+  },
+  methods: {
+    handleCreate: function() {
+      this.loading = true
+      var params = { contact: this.$data.form }
+      HTTP.post('/contacts', params )
+      .then(response => {
+        this.afterResponse()
+        this.alertMessage('Added')
+      })
+    },
+    toggleDrawer: function() {
+      this.$emit('toggleDrawer')
+    },
+    handleUpdate: function() {
+      this.loading = true
+      var params = { contact: this.$data.form }
+      HTTP.put('/contacts/' + this.form.id, params)
+      .then(response => {
+        this.afterResponse()
+        this.alertMessage('Updated')
+      })
+    },
+    afterResponse: function() {
+      this.loading = false
+      this.$emit('showIndex')
+    },
+    alertMessage: function(msg) {
+      this.$message({
+        message: 'Success! '+ msg + ' External Contact.',
+        type: 'success'
+      });
+    }
   }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
