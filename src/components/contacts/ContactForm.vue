@@ -46,17 +46,17 @@ export default {
   name: 'ContactForm',
   components: {
   },
-  props: ["ContactData"],
+  props: ['ContactData'],
   watch: {
-    ContactData(newvalue, oldvalue) {
+    ContactData (newvalue, oldvalue) {
       if (this.ContactData.id !== undefined) {
         this.form = this.ContactData
-      }else{
+      } else {
         this.form = {}
       }
     }
   },
-  data() {
+  data () {
     return {
       form: {
         name: '',
@@ -72,44 +72,42 @@ export default {
       loading: false
     }
   },
-  created() {
-    var user_types = ["Executive", "Inmar AR", "Daily", "Other"]
+  created () {
+    var userTypes = ['Executive', 'Inmar AR', 'Daily', 'Other']
     var self = this
-    user_types.forEach(function(element) {
+    userTypes.forEach(function (element) {
       self.types.push({value: element, label: element})
     })
   },
   methods: {
-    handleCreate: function() {
+    handleCreate: function () {
       this.loading = true
       var params = { contact: this.$data.form }
-      HTTP.post('/contacts', params )
-      .then(response => {
+      HTTP.post('/contacts', params).then(response => {
         this.afterResponse()
         this.alertMessage('Added')
       })
     },
-    toggleDrawer: function() {
+    toggleDrawer: function () {
       this.$emit('toggleDrawer')
     },
-    handleUpdate: function() {
+    handleUpdate: function () {
       this.loading = true
       var params = { contact: this.$data.form }
-      HTTP.put('/contacts/' + this.form.id, params)
-      .then(response => {
+      HTTP.put('/contacts/' + this.form.id, params).then(response => {
         this.afterResponse()
         this.alertMessage('Updated')
       })
     },
-    afterResponse: function() {
+    afterResponse: function () {
       this.loading = false
       this.$emit('showIndex')
     },
-    alertMessage: function(msg) {
+    alertMessage: function (msg) {
       this.$message({
-        message: 'Success! '+ msg + ' External Contact.',
+        message: 'Success! ' + msg + ' External Contact.',
         type: 'success'
-      });
+      })
     }
   }
 }
